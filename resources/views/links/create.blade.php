@@ -73,6 +73,58 @@
 
                     <hr class="my-4">
 
+                    <!-- Protection & Scheduling -->
+                    <h6 class="fw-700 text-uppercase text-muted small mb-3">
+                        <i class="bi bi-shield-lock me-1"></i> Protection &amp; Scheduling
+                    </h6>
+
+                    <!-- Password protection -->
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-600">
+                            Password protection <span class="text-muted fw-normal">(optional)</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                            <input type="text" class="form-control @error('password') is-invalid @enderror"
+                                   id="password" name="password" value="{{ old('password') }}"
+                                   placeholder="Set a password to protect this link" maxlength="255" autocomplete="off">
+                        </div>
+                        @error('password')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">Visitors must enter this password before being redirected.</div>
+                    </div>
+
+                    <!-- Active window -->
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <label for="starts_at" class="form-label fw-600">
+                                Active from <span class="text-muted fw-normal">(optional)</span>
+                            </label>
+                            <input type="datetime-local" class="form-control @error('starts_at') is-invalid @enderror"
+                                   id="starts_at" name="starts_at" value="{{ old('starts_at') }}">
+                            @error('starts_at')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="expires_at" class="form-label fw-600">
+                                Active until <span class="text-muted fw-normal">(optional)</span>
+                            </label>
+                            <input type="datetime-local" class="form-control @error('expires_at') is-invalid @enderror"
+                                   id="expires_at" name="expires_at" value="{{ old('expires_at') }}">
+                            @error('expires_at')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="form-text mb-4">
+                        <i class="bi bi-clock me-1"></i>
+                        Times are in <strong>WIB (UTC+7)</strong>. Leave blank for no time limit.
+                    </div>
+
+                    <hr class="my-4">
+
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i> Cancel

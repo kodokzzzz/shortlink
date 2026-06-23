@@ -227,7 +227,7 @@
 <footer class="py-4 bg-body-tertiary border-top">
     <div class="container text-center">
         <p class="mb-0 text-muted small">
-            &copy; {{ date('Y') }} Shortlink. Built with <i class="bi bi-heart-fill text-danger"></i> using Laravel & Bootstrap.
+            @ {{ date('Y') }} shortlink asrul
         </p>
     </div>
 </footer>

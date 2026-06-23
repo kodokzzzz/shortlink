@@ -34,6 +34,13 @@ class StoreLinkRequest extends FormRequest
                     }
                 },
             ],
+            'password' => ['nullable', 'string', 'min:1', 'max:255'],
+            'starts_at' => ['nullable', 'date'],
+            'expires_at' => [
+                'nullable',
+                'date',
+                Rule::when($this->filled('starts_at'), ['after:starts_at']),
+            ],
         ];
     }
 
@@ -47,6 +54,7 @@ class StoreLinkRequest extends FormRequest
             'slug.max' => 'Custom slug must not exceed 100 characters.',
             'slug.regex' => 'Custom slug can only contain letters, numbers, hyphens, and underscores.',
             'slug.unique' => 'This slug is already taken.',
+            'expires_at.after' => 'The expiry time must be after the start time.',
         ];
     }
 }

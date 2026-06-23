@@ -7,10 +7,17 @@ use App\Http\Requests\UpdateLinkRequest;
 use App\Models\Link;
 use App\Services\SlugService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LinkController extends Controller
 {
+    /**
+     * Timezone used to interpret schedule inputs from the browser (WIB).
+     */
+    private const INPUT_TZ = 'Asia/Jakarta';
+
     public function __construct(
         private SlugService $slugService,
     ) {}
@@ -73,6 +80,9 @@ class LinkController extends Controller
             'slug' => $validated['slug'] ?? 'temp-' . uniqid(), // temporary slug
             'title' => $validated['title'] ?? null,
             'status' => 'active',
+            'password' => !empty($validated['password']) ? Hash::make($validated['password']) : null,
+            'starts_at' => $this->parseSchedule($validated['starts_at'] ?? null),
+            'expires_at' => $this->parseSchedule($validated['expires_at'] ?? null),
         ]);
 
         // Generate slug if not custom
@@ -159,11 +169,22 @@ class LinkController extends Controller
 
         $oldSlug = $link->slug;
 
-        $link->update([
+        $attributes = [
             'original_url' => $validated['original_url'],
             'title' => $validated['title'] ?? $link->title,
             'slug' => $validated['slug'] ?? $link->slug,
-        ]);
+            'starts_at' => $this->parseSchedule($validated['starts_at'] ?? null),
+            'expires_at' => $this->parseSchedule($validated['expires_at'] ?? null),
+        ];
+
+        // Password: remove, replace, or leave untouched.
+        if ($request->boolean('remove_password')) {
+            $attributes['password'] = null;
+        } elseif (!empty($validated['password'])) {
+            $attributes['password'] = Hash::make($validated['password']);
+        }
+
+        $link->update($attributes);
 
         $message = 'Link updated successfully!';
         if ($oldSlug !== $link->slug) {
@@ -203,5 +224,17 @@ class LinkController extends Controller
 
         return redirect()->back()
             ->with('success', "Link is now {$newStatus}.");
+    }
+
+    /**
+     * Parse a datetime-local value (entered in WIB) into a UTC Carbon instance.
+     */
+    private function parseSchedule(?string $value): ?Carbon
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        return Carbon::parse($value, self::INPUT_TZ)->utc();
     }
 }

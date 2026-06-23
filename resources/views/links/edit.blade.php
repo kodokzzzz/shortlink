@@ -76,6 +76,82 @@
 
                     <hr class="my-4">
 
+                    <!-- Protection & Scheduling -->
+                    <h6 class="fw-700 text-uppercase text-muted small mb-3">
+                        <i class="bi bi-shield-lock me-1"></i> Protection &amp; Scheduling
+                    </h6>
+
+                    <!-- Password protection -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-600">
+                            Password protection
+                            @if ($link->isPasswordProtected())
+                                <span class="badge text-bg-success ms-1"><i class="bi bi-lock-fill"></i> Enabled</span>
+                            @else
+                                <span class="text-muted fw-normal">(optional)</span>
+                            @endif
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                            <input type="text" class="form-control @error('password') is-invalid @enderror"
+                                   id="password" name="password" value="{{ old('password') }}"
+                                   placeholder="{{ $link->isPasswordProtected() ? 'Enter a new password to change it' : 'Set a password to protect this link' }}"
+                                   maxlength="255" autocomplete="off">
+                        </div>
+                        @error('password')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                        <div class="form-text">
+                            @if ($link->isPasswordProtected())
+                                Leave blank to keep the current password.
+                            @else
+                                Visitors must enter this password before being redirected.
+                            @endif
+                        </div>
+
+                        @if ($link->isPasswordProtected())
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" value="1"
+                                       id="remove_password" name="remove_password">
+                                <label class="form-check-label text-danger" for="remove_password">
+                                    Remove password protection
+                                </label>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Active window -->
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <label for="starts_at" class="form-label fw-600">
+                                Active from <span class="text-muted fw-normal">(optional)</span>
+                            </label>
+                            <input type="datetime-local" class="form-control @error('starts_at') is-invalid @enderror"
+                                   id="starts_at" name="starts_at"
+                                   value="{{ old('starts_at', $link->starts_at?->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')) }}">
+                            @error('starts_at')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="expires_at" class="form-label fw-600">
+                                Active until <span class="text-muted fw-normal">(optional)</span>
+                            </label>
+                            <input type="datetime-local" class="form-control @error('expires_at') is-invalid @enderror"
+                                   id="expires_at" name="expires_at"
+                                   value="{{ old('expires_at', $link->expires_at?->timezone('Asia/Jakarta')->format('Y-m-d\TH:i')) }}">
+                            @error('expires_at')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="form-text mb-4">
+                        <i class="bi bi-clock me-1"></i>
+                        Times are in <strong>WIB (UTC+7)</strong>. Clear a field to remove its limit.
+                    </div>
+
+                    <hr class="my-4">
+
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{{ route('links.show', $link) }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-1"></i> Cancel

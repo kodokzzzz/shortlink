@@ -17,12 +17,21 @@ class Link extends Model
         'slug',
         'title',
         'status',
+        'password',
+        'starts_at',
+        'expires_at',
         'total_clicks',
         'qr_code_path',
     ];
 
+    protected $hidden = [
+        'password',
+    ];
+
     protected $casts = [
         'total_clicks' => 'integer',
+        'starts_at' => 'datetime',
+        'expires_at' => 'datetime',
     ];
 
     // =============================================
@@ -86,5 +95,47 @@ class Link extends Model
     {
         $lastClick = $this->clickEvents()->latest('clicked_at')->first();
         return $lastClick ? $lastClick->clicked_at : null;
+    }
+
+    // =============================================
+    // Protected link (password)
+    // =============================================
+
+    public function isPasswordProtected(): bool
+    {
+        return filled($this->password);
+    }
+
+    // =============================================
+    // Time-based link (schedule)
+    // =============================================
+
+    public function hasSchedule(): bool
+    {
+        return $this->starts_at !== null || $this->expires_at !== null;
+    }
+
+    /**
+     * Link's start time is in the future — not yet active.
+     */
+    public function isNotYetActive(): bool
+    {
+        return $this->starts_at !== null && now()->lt($this->starts_at);
+    }
+
+    /**
+     * Link's end time has passed — expired.
+     */
+    public function isExpired(): bool
+    {
+        return $this->expires_at !== null && now()->gt($this->expires_at);
+    }
+
+    /**
+     * Current time is within the configured active window (if any).
+     */
+    public function isWithinSchedule(): bool
+    {
+        return ! $this->isNotYetActive() && ! $this->isExpired();
     }
 }

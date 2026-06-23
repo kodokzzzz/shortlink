@@ -63,3 +63,8 @@ require __DIR__.'/auth.php';
 Route::get('/{slug}', [RedirectController::class, 'handle'])
     ->name('redirect')
     ->where('slug', '[a-zA-Z0-9_-]+');
+
+// Password submission for protected links.
+Route::post('/{slug}', [RedirectController::class, 'unlock'])
+    ->name('redirect.unlock')
+    ->where('slug', '[a-zA-Z0-9_-]+');
