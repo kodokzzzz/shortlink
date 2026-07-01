@@ -42,6 +42,13 @@
                 Profile
             </a>
 
+            @if (Auth::user()?->isAdmin())
+                <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <i class="bi bi-people-fill"></i>
+                    Kelola User
+                </a>
+            @endif
+
             <hr class="mx-3 my-2 opacity-25">
 
             <form method="POST" action="{{ route('logout') }}">
